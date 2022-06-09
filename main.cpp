@@ -1,8 +1,10 @@
 #include <stdio.h>
 #include <Windows.h>
 #include <chrono>
+#include <conio.h>
 
 #pragma comment(lib, "kernel32.lib")
+
 
 HANDLE hStdout;
 HANDLE hStdin;
@@ -10,8 +12,8 @@ HANDLE hStdin;
 bool isEnd = false;
 std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
-
 #define GET_LAST_ERROR printf("%s::%d %d", __FILE__, __LINE__, GetLastError())
+#define MAP_SIZE 15
 
 bool KeyEventProc(KEY_EVENT_RECORD ker)
 {
@@ -83,6 +85,35 @@ void ElapsedTimer()
     ProcessUserInput();
 }
 
+void CreateMap(int size)
+{
+    COORD tCoord = {0, 2};
+    SetConsoleCursorPosition(hStdout, tCoord);
+
+    for(int i = 0; i < size; i++)
+    {
+        printf("#");
+    }
+    printf("\n");
+
+    for(int i = 0; i < size-1; i++)
+    {
+        printf("#");
+        for(int j = 0; j < size-2; j++)
+        {
+            printf(" ");
+        }
+        printf("#");
+        printf("\n");
+    }
+
+    for(int i = 0; i < size; i++)
+    {
+        printf("#");
+    }
+    printf("\n");
+}
+
 
 int main(void)
 {
@@ -122,6 +153,7 @@ int main(void)
     {
         ElapsedTimer();
         ProcessUserInput();
+        CreateMap(MAP_SIZE);
     }
 }
 
