@@ -2,6 +2,10 @@
 #include <Windows.h>
 #include <chrono>
 #include <conio.h>
+#include <vector>
+#include <string>
+#include <sstream>
+#include <iostream>
 
 #pragma comment(lib, "kernel32.lib")
 
@@ -14,6 +18,70 @@ std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
 #define GET_LAST_ERROR printf("%s::%d %d", __FILE__, __LINE__, GetLastError())
 #define MAP_SIZE 15
+
+struct ScreenData
+{
+    COORD pos;
+    std::string data;
+};
+
+class ScreenBuffer
+{
+private:
+    std::vector<ScreenData> data;
+
+public:
+    ScreenBuffer() {};
+
+    void AddData(COORD& InPos, std::string InData)
+    {
+        ScreenData t;
+        t.pos = InPos;
+        t.data = InData;
+        data.push_back(t);
+    }
+
+    std::vector<ScreenData> GetData()
+    {
+        return data;
+    }
+
+    void Clear()
+    {
+        data.clear();
+    }
+};
+
+class Screen
+{
+private:
+    ScreenBuffer screenBuffer[2];
+    int currentIdx = 0;
+
+public:
+    Screen() {};
+
+    ScreenBuffer& GetCurrentBuffer()
+    {
+        return screenBuffer[currentIdx];
+    }
+
+    void DrawCall()
+    {
+        for(ScreenData d : GetCurrentBuffer().GetData())
+        {
+            SetConsoleCursorPosition(hStdout, d.pos);
+            std::cout << d.data << std::endl;
+        }
+
+        GetCurrentBuffer().Clear();
+
+        currentIdx++;
+        currentIdx%=2;
+    }
+};
+
+Screen* screen = new Screen();
 
 bool KeyEventProc(KEY_EVENT_RECORD ker)
 {
@@ -33,10 +101,11 @@ bool KeyEventProc(KEY_EVENT_RECORD ker)
     if(!ker.bKeyDown)
     {
         COORD pCoord = {0, 1};
-        SetConsoleCursorPosition(hStdout, pCoord);
 
-        printf("Key event: ");
-        printf("0x%08x key released\n", ker.wVirtualKeyCode);
+        std::ostringstream stringStream;
+
+        stringStream << "Key event: "<< ker.wVirtualKeyCode<< " key released\n";
+        screen->GetCurrentBuffer().AddData(pCoord, stringStream.str());
     }
 
     return true;
@@ -82,38 +151,40 @@ void ElapsedTimer()
     SetConsoleCursorPosition(hStdout, tCoord);
 
     printf("Time Diff : %10lld\n", std::chrono::duration_cast<std::chrono::milliseconds> (std::chrono::steady_clock::now() - begin).count());
-    ProcessUserInput();
 }
 
 void CreateMap(int size)
 {
     COORD tCoord = {0, 2};
+
+    std::ostringstream stringStream;
     SetConsoleCursorPosition(hStdout, tCoord);
 
     for(int i = 0; i < size; i++)
     {
-        printf("#");
+        stringStream << "#";
     }
-    printf("\n");
+    stringStream << "\n";
 
     for(int i = 0; i < size-1; i++)
     {
-        printf("#");
+        stringStream << "#";
         for(int j = 0; j < size-2; j++)
         {
-            printf(" ");
+            stringStream << " ";
         }
-        printf("#");
-        printf("\n");
+        stringStream << "#";
+        stringStream << "\n";
     }
 
     for(int i = 0; i < size; i++)
     {
-        printf("#");
+        stringStream << "#";
     }
-    printf("\n");
-}
+    stringStream << "\n";
 
+    screen->GetCurrentBuffer().AddData(tCoord, stringStream.str());
+}
 
 int main(void)
 {
@@ -148,12 +219,15 @@ int main(void)
         GET_LAST_ERROR;
     }
 
+    std::chrono::steady_clock::time_point previous = std::chrono::steady_clock::now();;
 
     while(!isEnd)
     {
         ElapsedTimer();
         ProcessUserInput();
         CreateMap(MAP_SIZE);
+
+        screen->DrawCall();
     }
 }
 
