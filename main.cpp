@@ -17,7 +17,6 @@ bool isEnd = false;
 std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
 #define GET_LAST_ERROR printf("%s::%d %d", __FILE__, __LINE__, GetLastError())
-#define MAP_SIZE 15
 
 class IUpdate
 {
@@ -178,7 +177,7 @@ void ElapsedTimer()
     COORD tCoord = {0, 0};
     SetConsoleCursorPosition(hStdout, tCoord);
 
-    printf("Time Diff : %10lld\n", std::chrono::duration_cast<std::chrono::milliseconds> (std::chrono::steady_clock::now() - begin).count());
+    printf("Time Elapsed : %10lld\n", std::chrono::duration_cast<std::chrono::milliseconds> (std::chrono::steady_clock::now() - begin).count());
 }
 
 class World : public IUpdate
@@ -197,6 +196,7 @@ public:
 private:
     int _size;
     Screen& _screen;
+    char guide = '#';
 
     void CreateMap(int size)
     {
@@ -205,26 +205,26 @@ private:
         std::ostringstream stringStream;
         SetConsoleCursorPosition(hStdout, tCoord);
 
-        for(int i = 0; i < size; i++)
+        for(int i = 0; i < size * 2; i++)
         {
-            stringStream << "#";
+            stringStream << guide;
         }
         stringStream << "\n";
 
         for(int i = 0; i < size - 1; i++)
         {
-            stringStream << "#";
-            for(int j = 0; j < size - 2; j++)
+            stringStream << guide;
+            for(int j = 0; j < (size * 2) - 2; j++)
             {
                 stringStream << " ";
             }
-            stringStream << "#";
+            stringStream << guide;
             stringStream << "\n";
         }
 
-        for(int i = 0; i < size; i++)
+        for(int i = 0; i < size * 2; i++)
         {
-            stringStream << "#";
+            stringStream << guide;
         }
         stringStream << "\n";
 
@@ -269,7 +269,9 @@ int main(void)
     Screen screen;
 
     InputController userInput(screen);
-    World world(MAP_SIZE, screen);
+    //World world(15, screen);
+    //World world(15, screen);
+    World world(20, screen);
 
     while(!isEnd)
     {
