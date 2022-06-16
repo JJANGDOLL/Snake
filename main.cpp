@@ -19,6 +19,11 @@ std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 #define GET_LAST_ERROR printf("%s::%d %d", __FILE__, __LINE__, GetLastError())
 #define MAP_SIZE 15
 
+class IUpdate
+{
+    virtual void update() = 0;
+};
+
 struct ScreenData
 {
     COORD pos;
@@ -81,69 +86,92 @@ public:
     }
 };
 
-Screen* screen = new Screen();
-
-bool KeyEventProc(KEY_EVENT_RECORD ker)
+class Snake
 {
-    if(ker.bKeyDown)
-        return false;
 
-    switch(ker.wVirtualKeyCode)
+
+private:
+    uint8_t _len = 3;
+};
+
+class InputController : public IUpdate
+{
+public:
+    InputController(Screen& screen)
+        : _screen(screen)
+    {}
+
+    void update()
     {
-        case VK_ESCAPE:
-            isEnd = true;
-            break;
-
-        default:
-            break;
+        ProcessUserInput();
     }
 
-    if(!ker.bKeyDown)
+private:
+    Screen& _screen;
+
+    void ProcessUserInput()
     {
-        COORD pCoord = {0, 1};
-
-        std::ostringstream stringStream;
-
-        stringStream << "Key event: "<< ker.wVirtualKeyCode<< " key released\n";
-        screen->GetCurrentBuffer().AddData(pCoord, stringStream.str());
-    }
-
-    return true;
-}
-
-void ProcessUserInput()
-{
-    INPUT_RECORD inRecordBuffer[128];
-    DWORD numOfRead;
-    if(GetNumberOfConsoleInputEvents(hStdin, &numOfRead))
-    {
-        if(numOfRead > 0)
+        INPUT_RECORD inRecordBuffer[128];
+        DWORD numOfRead;
+        if(GetNumberOfConsoleInputEvents(hStdin, &numOfRead))
         {
-            if(!ReadConsoleInput(
-                hStdin,
-                inRecordBuffer,
-                128,
-                &numOfRead
-            ))
+            if(numOfRead > 0)
             {
-                GET_LAST_ERROR;
-            }
-
-            for(int i = 0; i < numOfRead; i++)
-            {
-                switch(inRecordBuffer[i].EventType)
+                if(!ReadConsoleInput(
+                    hStdin,
+                    inRecordBuffer,
+                    128,
+                    &numOfRead
+                ))
                 {
-                    case KEY_EVENT:
-                        KeyEventProc(inRecordBuffer[i].Event.KeyEvent);
-                        break;
+                    GET_LAST_ERROR;
+                }
 
-                    default:
-                        break;
+                for(int i = 0; i < numOfRead; i++)
+                {
+                    switch(inRecordBuffer[i].EventType)
+                    {
+                        case KEY_EVENT:
+                            KeyEventProc(inRecordBuffer[i].Event.KeyEvent);
+                            break;
+
+                        default:
+                            break;
+                    }
                 }
             }
         }
     }
-}
+
+    bool KeyEventProc(KEY_EVENT_RECORD ker)
+    {
+        if(ker.bKeyDown)
+            return false;
+
+        switch(ker.wVirtualKeyCode)
+        {
+            case VK_ESCAPE:
+                isEnd = true;
+                break;
+
+            default:
+                break;
+        }
+
+        if(!ker.bKeyDown)
+        {
+            COORD pCoord = {0, 1};
+
+            std::ostringstream stringStream;
+
+            stringStream << "Key event: " << ker.wVirtualKeyCode << " key released\n";
+            _screen.GetCurrentBuffer().AddData(pCoord, stringStream.str());
+        }
+
+        return true;
+    }
+
+};
 
 void ElapsedTimer()
 {
@@ -153,38 +181,56 @@ void ElapsedTimer()
     printf("Time Diff : %10lld\n", std::chrono::duration_cast<std::chrono::milliseconds> (std::chrono::steady_clock::now() - begin).count());
 }
 
-void CreateMap(int size)
+class World : public IUpdate
 {
-    COORD tCoord = {0, 2};
+public:
+    World(int InSize, Screen& InScreen)
+        : _size(InSize)
+        , _screen(InScreen)
+    {};
 
-    std::ostringstream stringStream;
-    SetConsoleCursorPosition(hStdout, tCoord);
-
-    for(int i = 0; i < size; i++)
+    void update()
     {
-        stringStream << "#";
+        CreateMap(_size);
     }
-    stringStream << "\n";
 
-    for(int i = 0; i < size-1; i++)
+private:
+    int _size;
+    Screen& _screen;
+
+    void CreateMap(int size)
     {
-        stringStream << "#";
-        for(int j = 0; j < size-2; j++)
+        COORD tCoord = {0, 2};
+
+        std::ostringstream stringStream;
+        SetConsoleCursorPosition(hStdout, tCoord);
+
+        for(int i = 0; i < size; i++)
         {
-            stringStream << " ";
+            stringStream << "#";
         }
-        stringStream << "#";
         stringStream << "\n";
-    }
 
-    for(int i = 0; i < size; i++)
-    {
-        stringStream << "#";
-    }
-    stringStream << "\n";
+        for(int i = 0; i < size - 1; i++)
+        {
+            stringStream << "#";
+            for(int j = 0; j < size - 2; j++)
+            {
+                stringStream << " ";
+            }
+            stringStream << "#";
+            stringStream << "\n";
+        }
 
-    screen->GetCurrentBuffer().AddData(tCoord, stringStream.str());
-}
+        for(int i = 0; i < size; i++)
+        {
+            stringStream << "#";
+        }
+        stringStream << "\n";
+
+        _screen.GetCurrentBuffer().AddData(tCoord, stringStream.str());
+    }
+};
 
 int main(void)
 {
@@ -200,12 +246,11 @@ int main(void)
         GET_LAST_ERROR;
     }
 
-     DWORD fwMode = ENABLE_WINDOW_INPUT | ENABLE_EXTENDED_FLAGS;
-     if(!SetConsoleMode(hStdin, fwMode))
-     {
-         GET_LAST_ERROR;
-     }
-     
+    DWORD fwMode = ENABLE_WINDOW_INPUT | ENABLE_EXTENDED_FLAGS;
+    if(!SetConsoleMode(hStdin, fwMode))
+    {
+        GET_LAST_ERROR;
+    }
 
     CONSOLE_CURSOR_INFO cursorInfo = {0,};
     if(!GetConsoleCursorInfo(hStdout, &cursorInfo))
@@ -219,15 +264,20 @@ int main(void)
         GET_LAST_ERROR;
     }
 
-    std::chrono::steady_clock::time_point previous = std::chrono::steady_clock::now();;
+    std::chrono::steady_clock::time_point previous = std::chrono::steady_clock::now();
+
+    Screen screen;
+
+    InputController userInput(screen);
+    World world(MAP_SIZE, screen);
 
     while(!isEnd)
     {
         ElapsedTimer();
-        ProcessUserInput();
-        CreateMap(MAP_SIZE);
 
-        screen->DrawCall();
+        userInput.update();
+        world.update();
+        screen.DrawCall();
     }
 }
 
