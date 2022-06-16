@@ -14,9 +14,9 @@ HANDLE hStdout;
 HANDLE hStdin;
 
 bool isEnd = false;
-std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
 #define GET_LAST_ERROR printf("%s::%d %d", __FILE__, __LINE__, GetLastError())
+#define MS_PER_UPDATE (unsigned long)1.0 / 60.0
 
 class IUpdate
 {
@@ -172,59 +172,66 @@ private:
 
 };
 
-void ElapsedTimer()
-{
-    COORD tCoord = {0, 0};
-    SetConsoleCursorPosition(hStdout, tCoord);
-
-    printf("Time Elapsed : %10lld\n", std::chrono::duration_cast<std::chrono::milliseconds> (std::chrono::steady_clock::now() - begin).count());
-}
-
 class World : public IUpdate
 {
 public:
     World(int InSize, Screen& InScreen)
         : _size(InSize)
         , _screen(InScreen)
+        , _guide('#')
+        , _perSecond(1/60)
+        , _beginTime(std::chrono::steady_clock::now())
     {};
 
     void update()
     {
-        CreateMap(_size);
+        CreateMap();
+        ElapsedTimer();
     }
 
 private:
     int _size;
     Screen& _screen;
-    char guide = '#';
+    char _guide;
+    int _perSecond;
+    std::chrono::steady_clock::time_point _beginTime;
 
-    void CreateMap(int size)
+    void ElapsedTimer()
+    {
+        COORD tCoord = {0, 0};
+        std::ostringstream stringStream;
+
+        stringStream << "Time Elapsed : " << std::chrono::duration_cast<std::chrono::milliseconds> (std::chrono::steady_clock::now() - _beginTime).count();
+
+        _screen.GetCurrentBuffer().AddData(tCoord, stringStream.str());
+    }
+
+    void CreateMap()
     {
         COORD tCoord = {0, 2};
 
         std::ostringstream stringStream;
-        SetConsoleCursorPosition(hStdout, tCoord);
 
-        for(int i = 0; i < size * 2; i++)
+        for(int i = 0; i < _size * 2; i++)
         {
-            stringStream << guide;
+            stringStream << _guide;
         }
         stringStream << "\n";
 
-        for(int i = 0; i < size - 1; i++)
+        for(int i = 0; i < _size - 1; i++)
         {
-            stringStream << guide;
-            for(int j = 0; j < (size * 2) - 2; j++)
+            stringStream << _guide;
+            for(int j = 0; j < (_size * 2) - 2; j++)
             {
                 stringStream << " ";
             }
-            stringStream << guide;
+            stringStream << _guide;
             stringStream << "\n";
         }
 
-        for(int i = 0; i < size * 2; i++)
+        for(int i = 0; i < _size * 2; i++)
         {
-            stringStream << guide;
+            stringStream << _guide;
         }
         stringStream << "\n";
 
@@ -264,22 +271,25 @@ int main(void)
         GET_LAST_ERROR;
     }
 
-    std::chrono::steady_clock::time_point previous = std::chrono::steady_clock::now();
-
     Screen screen;
 
     InputController userInput(screen);
-    //World world(15, screen);
-    //World world(15, screen);
     World world(20, screen);
+
+    DWORD term = 0;
+    std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
 
     while(!isEnd)
     {
-        ElapsedTimer();
+        start = std::chrono::steady_clock::now();
 
         userInput.update();
         world.update();
         screen.DrawCall();
+
+        term = static_cast<unsigned long>(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()) + MS_PER_UPDATE;
+
+        Sleep(term);
     }
 }
 
