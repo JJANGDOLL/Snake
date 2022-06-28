@@ -20,6 +20,7 @@ bool isEnd = false;
 
 class IUpdate
 {
+public:
     virtual void update() = 0;
 };
 
@@ -96,9 +97,14 @@ private:
 class InputController : public IUpdate
 {
 public:
-    InputController(Screen& screen)
-        : _screen(screen)
-    {}
+    InputController()
+        : _screen(nullptr)
+    {};
+
+    void SetScreen(Screen& pScreen)
+    {
+        _screen = &pScreen;
+    }
 
     void update()
     {
@@ -106,7 +112,7 @@ public:
     }
 
 private:
-    Screen& _screen;
+    Screen* _screen;
 
     void ProcessUserInput()
     {
@@ -164,7 +170,7 @@ private:
             std::ostringstream stringStream;
 
             stringStream << "Key event: " << ker.wVirtualKeyCode << " key released\n";
-            _screen.GetCurrentBuffer().AddData(pCoord, stringStream.str());
+            _screen->GetCurrentBuffer().AddData(pCoord, stringStream.str());
         }
 
         return true;
@@ -172,7 +178,7 @@ private:
 
 };
 
-class World : public IUpdate
+class World
 {
 public:
     World(int InSize, Screen& InScreen)
@@ -183,10 +189,23 @@ public:
         , _beginTime(std::chrono::steady_clock::now())
     {};
 
-    void update()
+    void updateAll()
     {
         CreateMap();
         ElapsedTimer();
+
+        for(IUpdate* u : updateObjects)
+        {
+            u->update();
+        }
+    }
+
+    template<typename T>
+    T* addUpdateFactory()
+    {
+        T* newObj = new T();
+        updateObjects.emplace_back(newObj);
+        return newObj;
     }
 
 private:
@@ -195,6 +214,8 @@ private:
     char _guide;
     int _perSecond;
     std::chrono::steady_clock::time_point _beginTime;
+
+    std::vector<IUpdate*> updateObjects;
 
     void ElapsedTimer()
     {
@@ -271,21 +292,24 @@ int main(void)
         GET_LAST_ERROR;
     }
 
-    Screen screen;
-
-    InputController userInput(screen);
-    World world(20, screen);
+    Screen* screen = new Screen();
+    World world(20, *screen);
 
     DWORD term = 0;
     std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
+
+
+    InputController* controller = world.addUpdateFactory<InputController>();
+
+    controller->SetScreen(*screen);
 
     while(!isEnd)
     {
         start = std::chrono::steady_clock::now();
 
-        userInput.update();
-        world.update();
-        screen.DrawCall();
+        world.updateAll();
+
+        screen->DrawCall();
 
         term = static_cast<unsigned long>(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()) + MS_PER_UPDATE;
 
