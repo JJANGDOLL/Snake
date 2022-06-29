@@ -1,0 +1,45 @@
+
+#include "Interfaces.h"
+#include <Windows.h>
+
+#pragma comment(lib, "kernel32.lib")
+
+class Screen;
+class World;
+
+class InputController: public IUpdate, public IWorld
+{
+public:
+    InputController()
+        : _screen(nullptr)
+    {};
+
+    void init(HANDLE InHandle)
+    {
+        hStdin = InHandle;
+    }
+
+    void SetScreen(Screen& pScreen)
+    {
+        _screen = &pScreen;
+    }
+
+    void setWorld(World* world)
+    {
+        _world = world;
+    }
+
+    void update()
+    {
+        ProcessUserInput();
+    }
+
+private:
+    Screen* _screen;
+    World* _world;
+    HANDLE hStdin;
+
+    void ProcessUserInput();
+
+    bool KeyEventProc(KEY_EVENT_RECORD ker);
+};
