@@ -66,7 +66,7 @@ int main(void)
     Snake* snake = World::getInstance().createUpdateObject<Snake>();
 
     screen->init(hStdout);
-    controller->init(hStdin);
+    controller->init(hStdin, *snake);
     snake->init();
 
     controller->SetScreen(*screen);

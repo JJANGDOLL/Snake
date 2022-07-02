@@ -6,6 +6,7 @@
 
 class Screen;
 class World;
+class Snake;
 
 class InputController: public IUpdate, public IWorld
 {
@@ -14,9 +15,10 @@ public:
         : _screen(nullptr)
     {};
 
-    void init(HANDLE InHandle)
+    void init(HANDLE InHandle, Snake& snake)
     {
         hStdin = InHandle;
+        _snake = &snake;
     }
 
     void SetScreen(Screen& pScreen)
@@ -38,6 +40,7 @@ private:
     Screen* _screen;
     World* _world;
     HANDLE hStdin;
+    Snake* _snake;
 
     void ProcessUserInput();
 

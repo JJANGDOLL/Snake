@@ -2,6 +2,7 @@
 #include "Macros.h"
 #include "Screen.h"
 #include "World.h"
+#include "Snake.h"
 #include <sstream>
 
 void InputController::ProcessUserInput()
@@ -55,12 +56,30 @@ bool InputController::KeyEventProc(KEY_EVENT_RECORD ker)
 
     if(!ker.bKeyDown)
     {
-        COORD pCoord = {0, 1};
+        //COORD pCoord = {0, 1};
 
-        std::ostringstream stringStream;
+        //std::ostringstream stringStream;
 
-        stringStream << "Key event: " << ker.wVirtualKeyCode << " key released\n";
-        _screen->GetCurrentBuffer().AddData(pCoord, stringStream.str());
+        //stringStream << "Key event: " << ker.wVirtualKeyCode << " key released\n";
+        //_screen->GetCurrentBuffer().AddData(pCoord, stringStream.str());
+
+        switch(ker.wVirtualKeyCode)
+        {
+            case VK_UP:
+                _snake->setMoveUp();
+                break;
+            case VK_DOWN:
+                _snake->setMoveDown();
+                break;
+            case VK_LEFT:
+                _snake->setMoveLeft();
+                break;
+            case VK_RIGHT:
+                _snake->setMoveRight();
+                break;
+            default:
+                break;
+        }
     }
 
     return true;

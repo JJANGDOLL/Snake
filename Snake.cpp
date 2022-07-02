@@ -22,7 +22,7 @@ void Snake::update()
     stringStream << Snake::Body;
     _tickCount++;
 
-    if(_tickCount > 30)
+    if(_tickCount > 20)
     {
         moveSnake();
         _tickCount = 0;
