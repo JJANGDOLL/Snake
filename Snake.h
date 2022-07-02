@@ -1,5 +1,6 @@
 #include <Windows.h>
 #include <stdint.h>
+#include <deque>
 #include "Interfaces.h"
 
 class Screen;
@@ -20,7 +21,7 @@ private:
 
 public:
     Snake()
-        : _len(3), _screen(nullptr), _world(nullptr), _moveDir(MoveDir::Right), _currCoord({0, 0}), _tickCount(0)
+        : _len(3), _screen(nullptr), _world(nullptr), _moveDir(MoveDir::Right), _tickCount(0)
     {};
 
     void SetScreen(Screen& pScreen);
@@ -41,7 +42,7 @@ private:
     Screen* _screen;
     World* _world;
     MoveDir _moveDir;
-    COORD _currCoord;
+    std::deque<COORD> _bodies;
     uint16_t _tickCount;
 
     void moveSnake();

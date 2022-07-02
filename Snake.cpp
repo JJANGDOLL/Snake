@@ -28,33 +28,45 @@ void Snake::update()
         _tickCount = 0;
     }
 
-    _screen->GetCurrentBuffer().AddData(_currCoord, stringStream.str());
+    for(COORD body : _bodies)
+    {
+        _screen->GetCurrentBuffer().AddData(body, stringStream.str());
+    }
 }
 
 void Snake::init()
 {
-    _currCoord = _world->startMapCoord();
+    COORD sPos = _world->startMapCoord();
     uint8_t mapSize = _world->MapSize();
 
-    _currCoord.X += (mapSize >> 1);
-    _currCoord.Y += (mapSize >> 1);
+    sPos.X += (mapSize >> 1);
+    sPos.Y += (mapSize >> 1);
+
+    _bodies.push_back({sPos.X + 1, sPos.Y});
+    _bodies.push_back({sPos.X, sPos.Y});
+    _bodies.push_back({sPos.X - 1, sPos.Y});
 }
 
 void Snake::moveSnake()
 {
+    COORD head = _bodies[0];
+
     switch(_moveDir)
     {
         case MoveDir::Up:
-            _currCoord.Y -= 1;
+            head.Y -= 1;
             break;
         case MoveDir::Down:
-            _currCoord.Y += 1;
+            head.Y += 1;
             break;
         case MoveDir::Left:
-            _currCoord.X -= 1;
+            head.X -= 1;
             break;
         case MoveDir::Right:
-            _currCoord.X += 1;
+            head.X += 1;
             break;
     }
+
+    _bodies.push_front(head);
+    _bodies.pop_back();
 }
