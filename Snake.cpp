@@ -3,6 +3,8 @@
 #include "Screen.h"
 #include <sstream>
 
+const char Snake::Body = 'O';
+
 void Snake::SetScreen(Screen& pScreen)
 {
     _screen = &pScreen;
@@ -15,23 +17,44 @@ void Snake::setWorld(World* world)
 
 void Snake::update()
 {
-    COORD coord = snakeStartCoord();
-
     std::ostringstream stringStream;
 
-    stringStream << "A";
+    stringStream << Snake::Body;
+    _tickCount++;
 
-    _screen->GetCurrentBuffer().AddData(snakeStartCoord(), stringStream.str());
+    if(_tickCount > 30)
+    {
+        moveSnake();
+        _tickCount = 0;
+    }
+
+    _screen->GetCurrentBuffer().AddData(_currCoord, stringStream.str());
 }
 
-COORD Snake::snakeStartCoord()
+void Snake::init()
 {
-    COORD mapStartCoord = _world->startMapCoord();
+    _currCoord = _world->startMapCoord();
     uint8_t mapSize = _world->MapSize();
 
-    mapStartCoord.X += (mapSize >> 2);
-    mapStartCoord.Y += (mapSize >> 2);
-
-    return mapStartCoord;
+    _currCoord.X += (mapSize >> 1);
+    _currCoord.Y += (mapSize >> 1);
 }
 
+void Snake::moveSnake()
+{
+    switch(_moveDir)
+    {
+        case MoveDir::Up:
+            _currCoord.Y -= 1;
+            break;
+        case MoveDir::Down:
+            _currCoord.Y += 1;
+            break;
+        case MoveDir::Left:
+            _currCoord.X -= 1;
+            break;
+        case MoveDir::Right:
+            _currCoord.X += 1;
+            break;
+    }
+}

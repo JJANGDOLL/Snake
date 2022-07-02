@@ -43,7 +43,7 @@ int main(void)
     {
         GET_LAST_ERROR;
     }
-
+    
     CONSOLE_CURSOR_INFO cursorInfo = {0,};
     if(!GetConsoleCursorInfo(hStdout, &cursorInfo))
     {
@@ -57,16 +57,17 @@ int main(void)
     }
 
     Screen* screen = new Screen();
-    screen->init(hStdout);
     World::getInstance(20, screen);
 
     DWORD term = 0;
     std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
 
-    InputController* controller = World::getInstance().addUpdateFactory<InputController>();
-    Snake* snake = World::getInstance().addUpdateFactory<Snake>();
+    InputController* controller = World::getInstance().createUpdateObject<InputController>();
+    Snake* snake = World::getInstance().createUpdateObject<Snake>();
 
+    screen->init(hStdout);
     controller->init(hStdin);
+    snake->init();
 
     controller->SetScreen(*screen);
     snake->SetScreen(*screen);

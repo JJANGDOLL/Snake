@@ -21,7 +21,7 @@ public:
     void updateAll();
 
     template<typename T>
-    T* addUpdateFactory()
+    T* createUpdateObject()
     {
         T* newObj = new T();
         newObj->setWorld(this);
