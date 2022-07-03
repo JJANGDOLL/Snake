@@ -77,6 +77,9 @@ bool InputController::KeyEventProc(KEY_EVENT_RECORD ker)
             case VK_RIGHT:
                 _snake->setMoveRight();
                 break;
+            case VK_SPACE:
+                _world->resetBeginTime();
+                break;
             default:
                 break;
         }

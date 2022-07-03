@@ -20,9 +20,8 @@ void Snake::update()
     std::ostringstream stringStream;
 
     stringStream << Snake::Body;
-    _tickCount++;
 
-    if(_tickCount > 20)
+    if(_tickCount >= 30)
     {
         moveSnake();
         _tickCount = 0;
@@ -32,6 +31,8 @@ void Snake::update()
     {
         _screen->GetCurrentBuffer().AddData(body, stringStream.str());
     }
+
+    _tickCount++;
 }
 
 void Snake::init()

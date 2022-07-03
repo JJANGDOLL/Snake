@@ -80,8 +80,9 @@ int main(void)
 
         screen->DrawCall();
 
-        term = static_cast<unsigned long>(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()) + MS_PER_UPDATE;
-
+        std::chrono::duration<double> elapsedTime = std::chrono::steady_clock::now() - start;
+        term = (World::getInstance().getPerSecond() - elapsedTime.count()) * 1000;
+        
         Sleep(term);
     }
 }

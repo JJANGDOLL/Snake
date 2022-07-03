@@ -49,11 +49,21 @@ public:
         _isEnd = true;
     }
 
+    double getPerSecond()
+    {
+        return _perSecond;
+    }
+
+    void resetBeginTime()
+    {
+        _beginTime = std::chrono::steady_clock::now();
+    }
+
 private:
     uint8_t _mapSize;
     Screen* _screen;
     char _guide;
-    int _perSecond;
+    double _perSecond;
     std::chrono::steady_clock::time_point _beginTime;
     std::vector<IUpdate*> _updateObjects;
     bool _isEnd = false;
@@ -63,7 +73,7 @@ private:
         : _mapSize(InSize)
         , _screen(InScreen)
         , _guide('#')
-        , _perSecond(1 / 60)
+        , _perSecond((double)1.0 / 60.0)
         , _beginTime(std::chrono::steady_clock::now())
         , _feed(nullptr)
     {};
@@ -76,6 +86,7 @@ private:
     void ElapsedTimer();
 
     void CreateMap();
+    
 };
 
 
