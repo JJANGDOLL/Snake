@@ -6,6 +6,7 @@
 #include <chrono>
 #include <Vector>
 #include <iostream>
+#include <map>
 
 class Screen;
 class IUpdate;
@@ -68,17 +69,16 @@ private:
     std::vector<IUpdate*> _updateObjects;
     bool _isEnd = false;
     Feed* _feed;
+    std::map<COORD, bool> _borderCoord;
 
     World(int InSize, Screen* InScreen)
         : _mapSize(InSize)
         , _screen(InScreen)
         , _guide('#')
-        , _perSecond((double)1.0 / 60.0)
+        , _perSecond((double)1.0 / 8.0)
         , _beginTime(std::chrono::steady_clock::now())
         , _feed(nullptr)
     {};
-
-    static World* _instance;
 
     World(const World&);
     World& operator=(const World&);
@@ -86,7 +86,7 @@ private:
     void ElapsedTimer();
 
     void CreateMap();
-    
+    void renderMap();
 };
 
 

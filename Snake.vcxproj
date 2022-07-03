@@ -144,6 +144,7 @@
     <ClCompile Include="main.cpp">
       <SDLCheck Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</SDLCheck>
     </ClCompile>
+    <ClCompile Include="Physical.cpp" />
     <ClCompile Include="Screen.cpp" />
     <ClCompile Include="Snake.cpp" />
     <ClCompile Include="World.cpp" />
@@ -153,6 +154,7 @@
     <ClInclude Include="InputController.h" />
     <ClInclude Include="Interfaces.h" />
     <ClInclude Include="Macros.h" />
+    <ClInclude Include="Physical.h" />
     <ClInclude Include="Screen.h" />
     <ClInclude Include="Snake.h" />
     <ClInclude Include="Utilities.h" />

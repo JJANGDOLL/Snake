@@ -23,7 +23,7 @@ void InputController::ProcessUserInput()
                 GET_LAST_ERROR;
             }
 
-            for(int i = 0; i < numOfRead; i++)
+            for(DWORD i = 0; i < numOfRead; i++)
             {
                 switch(inRecordBuffer[i].EventType)
                 {

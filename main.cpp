@@ -59,7 +59,7 @@ int main(void)
     Screen* screen = new Screen();
     World::getInstance(20, screen);
 
-    DWORD term = 0;
+    double term = 0;
     std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
 
     InputController* controller = World::getInstance().createUpdateObject<InputController>();
@@ -81,9 +81,9 @@ int main(void)
         screen->DrawCall();
 
         std::chrono::duration<double> elapsedTime = std::chrono::steady_clock::now() - start;
-        term = (World::getInstance().getPerSecond() - elapsedTime.count()) * 1000;
-        
-        Sleep(term);
+        term = (World::getInstance().getPerSecond() - elapsedTime.count());
+        if(term > 0)
+            Sleep(int(term * 1000));
     }
 }
 

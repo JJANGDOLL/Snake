@@ -4,12 +4,27 @@
 #include "Screen.h"
 #include "Feed.h"
 
+bool operator<(const COORD& left, const COORD& right)
+{
+    if(left.X < right.X)
+        return true;
+    if(left.X > right.X)
+        return false;
+
+    if(left.Y < right.Y)
+        return true;
+    if(left.Y > right.Y)
+        return false;
+
+    return false;
+}
+
 const COORD World::StartCoord = {0, 2};
 
-void World::updateAll()
+void World::updateAll() 
 {
-    CreateMap();
     ElapsedTimer();
+    renderMap();
 
     for(IUpdate* u : _updateObjects)
     {
@@ -27,40 +42,55 @@ void World::ElapsedTimer()
     COORD tCoord = {0, 0};
     std::ostringstream stringStream;
 
-    stringStream << "Score : " << std::chrono::duration_cast<std::chrono::seconds> (std::chrono::steady_clock::now() - _beginTime).count();
+    stringStream << "Elapsed Time : " << std::chrono::duration_cast<std::chrono::seconds> (std::chrono::steady_clock::now() - _beginTime).count();
 
     _screen->GetCurrentBuffer().AddData(tCoord, stringStream.str());
 }
 
 void World::CreateMap()
 {
-    std::ostringstream mapGuideStream;
+    COORD sPos = startMapCoord();
 
-    for(int i = 0; i < _mapSize * 2; i++)
+    for(uint8_t i = 0; i < _mapSize; i++)
     {
-        mapGuideStream << _guide;
-    }
-    mapGuideStream << "\n";
-
-    for(int i = 0; i < _mapSize - 1; i++)
-    {
-        mapGuideStream << _guide;
-        for(int j = 0; j < (_mapSize * 2) - 2; j++)
+        for(uint8_t j = 0; j < _mapSize * 2; j++)
         {
-            mapGuideStream << " ";
+            if(i == 0 || i == _mapSize - 1)
+            {
+                COORD cPos = sPos;
+                cPos.X += j;
+                cPos.Y += i;
+                _borderCoord[cPos] = true;
+            }
+            else
+            {
+                if(j == 0 || j == _mapSize * 2 - 1)
+                {
+                    COORD cPos = sPos;
+                    cPos.X += j;
+                    cPos.Y += i;
+                    _borderCoord[cPos] = true;
+                }
+                else
+                {
+                    COORD cPos = sPos;
+                    cPos.X += j;
+                    cPos.Y += i;
+                    _borderCoord[cPos] = false;
+                }
+            }
         }
-        mapGuideStream << _guide;
-        mapGuideStream << "\n";
     }
+}
 
-    for(int i = 0; i < _mapSize * 2; i++)
+void World::renderMap()
+{
+    for(const auto& cell : _borderCoord)
     {
-        mapGuideStream << _guide;
+        std::ostringstream mapGuideStream;
+        mapGuideStream << (cell.second ? _guide : ' ');
+        _screen->GetCurrentBuffer().AddData(cell.first, mapGuideStream.str());
     }
-    mapGuideStream << "\n";
-
-    _screen->GetCurrentBuffer().AddData(World::StartCoord, mapGuideStream.str());
-
 
     std::ostringstream feedStream;
     feedStream << _feed->getShape();
@@ -77,6 +107,7 @@ World& World::getInstance(int InSize /*= 0*/, Screen* InScreen /*= nullptr*/)
 
         _instance = new World(InSize, InScreen);
         _instance->_feed = new Feed(_instance);
+        _instance->CreateMap();
     }
     return *_instance;
 }
