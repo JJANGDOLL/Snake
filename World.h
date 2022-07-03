@@ -9,6 +9,7 @@
 
 class Screen;
 class IUpdate;
+class Feed;
 
 class World
 {
@@ -56,6 +57,7 @@ private:
     std::chrono::steady_clock::time_point _beginTime;
     std::vector<IUpdate*> _updateObjects;
     bool _isEnd = false;
+    Feed* _feed;
 
     World(int InSize, Screen* InScreen)
         : _mapSize(InSize)
@@ -63,6 +65,7 @@ private:
         , _guide('#')
         , _perSecond(1 / 60)
         , _beginTime(std::chrono::steady_clock::now())
+        , _feed(nullptr)
     {};
 
     static World* _instance;
