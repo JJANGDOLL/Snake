@@ -91,11 +91,6 @@ void World::renderMap()
         mapGuideStream << (cell.second ? _guide : ' ');
         _screen->GetCurrentBuffer().AddData(cell.first, mapGuideStream.str());
     }
-
-    std::ostringstream feedStream;
-    feedStream << _feed->getShape();
-
-    _screen->GetCurrentBuffer().AddData(_feed->getFeedCoord(), feedStream.str());
 }
 
 World& World::getInstance(int InSize /*= 0*/, Screen* InScreen /*= nullptr*/)
@@ -106,7 +101,6 @@ World& World::getInstance(int InSize /*= 0*/, Screen* InScreen /*= nullptr*/)
         assert((InSize > 0) && (InScreen != nullptr));
 
         _instance = new World(InSize, InScreen);
-        _instance->_feed = new Feed(_instance);
         _instance->CreateMap();
     }
     return *_instance;

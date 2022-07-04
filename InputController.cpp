@@ -5,6 +5,11 @@
 #include "Snake.h"
 #include <sstream>
 
+void InputController::checkHit()
+{
+    throw std::logic_error("The method or operation is not implemented.");
+}
+
 void InputController::ProcessUserInput()
 {
     INPUT_RECORD inRecordBuffer[128];

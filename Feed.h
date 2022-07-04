@@ -2,14 +2,17 @@
 
 #include <Windows.h>
 #include <string>
+#include "Interfaces.h"
 
 class World;
+class Screen;
 
-class Feed
+class Feed : public IPhysics, public IUpdate, public IWorld
 {
 public:
-    Feed(World* world);
+    Feed();
 
+    void init();
     void newFeed(World& world);
 
     inline COORD getFeedCoord()
@@ -22,8 +25,19 @@ public:
         return _shape;
     }
 
+    virtual void checkHit() override;
+
+
+    virtual void update() override;
+
+
+    virtual void setWorld(World* world) override;
+
+    void SetScreen(Screen& pScreen);
 private:
     COORD _feedCoord;
     int _mapSize;
     char _shape;
+    World* _world;
+    Screen* _screen;
 };

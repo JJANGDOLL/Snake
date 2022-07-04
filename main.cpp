@@ -12,6 +12,8 @@
 #include "Screen.h"
 #include "Snake.h"
 #include "InputController.h"
+#include "Physical.h"
+#include "Feed.h"
 
 #include "Macros.h"
 #include "Interfaces.h"
@@ -64,13 +66,16 @@ int main(void)
 
     InputController* controller = World::getInstance().createUpdateObject<InputController>();
     Snake* snake = World::getInstance().createUpdateObject<Snake>();
+    Feed* feed = World::getInstance().createUpdateObject<Feed>();
 
     screen->init(hStdout);
     controller->init(hStdin, *snake);
     snake->init();
+    feed->init();
 
     controller->SetScreen(*screen);
     snake->SetScreen(*screen);
+    feed->SetScreen(*screen);
 
     while(!World::getInstance().isEnd())
     {
@@ -79,6 +84,7 @@ int main(void)
         World::getInstance().updateAll();
 
         screen->DrawCall();
+
 
         std::chrono::duration<double> elapsedTime = std::chrono::steady_clock::now() - start;
         term = (World::getInstance().getPerSecond() - elapsedTime.count());

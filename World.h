@@ -10,7 +10,6 @@
 
 class Screen;
 class IUpdate;
-class Feed;
 
 class World
 {
@@ -21,6 +20,7 @@ public:
     ~World() {};
 
     void updateAll();
+    void physicsCheck();
 
     template<typename T>
     T* createUpdateObject()
@@ -35,27 +35,27 @@ public:
 
     COORD startMapCoord();
 
-    uint8_t MapSize()
+    inline uint8_t MapSize()
     {
         return _mapSize;
     }
 
-    bool isEnd()
+    inline bool isEnd()
     {
         return _isEnd;
     }
 
-    void gameEnd()
+    inline void gameEnd()
     {
         _isEnd = true;
     }
 
-    double getPerSecond()
+    inline double getPerSecond()
     {
         return _perSecond;
     }
 
-    void resetBeginTime()
+    inline void resetBeginTime()
     {
         _beginTime = std::chrono::steady_clock::now();
     }
@@ -68,7 +68,6 @@ private:
     std::chrono::steady_clock::time_point _beginTime;
     std::vector<IUpdate*> _updateObjects;
     bool _isEnd = false;
-    Feed* _feed;
     std::map<COORD, bool> _borderCoord;
 
     World(int InSize, Screen* InScreen)
@@ -77,7 +76,6 @@ private:
         , _guide('#')
         , _perSecond((double)1.0 / 8.0)
         , _beginTime(std::chrono::steady_clock::now())
-        , _feed(nullptr)
     {};
 
     World(const World&);

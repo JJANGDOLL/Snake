@@ -8,7 +8,7 @@ class Screen;
 class World;
 class Snake;
 
-class InputController: public IUpdate, public IWorld
+class InputController: public IUpdate, public IWorld, public IPhysics
 {
 public:
     InputController()
@@ -35,6 +35,9 @@ public:
     {
         ProcessUserInput();
     }
+
+
+    virtual void checkHit() override;
 
 private:
     Screen* _screen;

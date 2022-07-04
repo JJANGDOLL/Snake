@@ -48,6 +48,11 @@ void Snake::init()
     _bodies.push_back({sPos.X - 1, sPos.Y});
 }
 
+void Snake::checkHit()
+{
+    throw std::logic_error("The method or operation is not implemented.");
+}
+
 void Snake::moveSnake()
 {
     COORD head = _bodies[0];
