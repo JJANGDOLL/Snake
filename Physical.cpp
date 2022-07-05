@@ -17,3 +17,4 @@ bool Physics::checkHitCoord(const COORD lhs, const COORD rhs)
     return false;
 }
 
+

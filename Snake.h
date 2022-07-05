@@ -6,7 +6,7 @@
 class Screen;
 class World;
 
-class Snake: public IUpdate, public IWorld, public IPhysics
+class Snake: public IUpdate, public IWorld
 {
 private:
     enum class MoveDir
@@ -36,9 +36,16 @@ public:
     inline void setMoveDown() { _moveDir = MoveDir::Down; };
     inline void setMoveLeft() { _moveDir = MoveDir::Left; };
     inline void setMoveRight() { _moveDir = MoveDir::Right; };
-     
 
-    virtual void checkHit() override;
+    void growUp();
+
+    inline COORD getHeadCoord()
+    {
+        return _bodies[0];
+    }
+
+
+    virtual void listenEvent(ECustomEvents event) override;
 
 private:
     uint8_t _len = 3;

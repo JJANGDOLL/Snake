@@ -1,4 +1,5 @@
 #include <sstream>
+
 #include "Interfaces.h"
 #include "World.h"
 #include "Screen.h"
@@ -35,6 +36,21 @@ void World::updateAll()
 COORD World::startMapCoord()
 {
     return World::StartCoord;
+}
+
+void World::eventBroadcast()
+{
+    if(_customEvents.size() == 0)
+        return;
+    for(const auto& cEvent : _customEvents)
+    {
+        for(const auto& obj : _updateObjects)
+        {
+            obj->listenEvent(cEvent);
+        }
+    }
+
+    _customEvents.clear();
 }
 
 void World::ElapsedTimer()

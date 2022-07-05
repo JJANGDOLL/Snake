@@ -1,6 +1,7 @@
 #include "Snake.h"
 #include "World.h"
 #include "Screen.h"
+#include "Events.h"
 #include <sstream>
 
 const char Snake::Body = 'O';
@@ -48,9 +49,24 @@ void Snake::init()
     _bodies.push_back({sPos.X - 1, sPos.Y});
 }
 
-void Snake::checkHit()
+void Snake::growUp()
 {
-    throw std::logic_error("The method or operation is not implemented.");
+    COORD tail = _bodies[_len-1];
+
+    _bodies.push_back(tail);
+    _len++;
+}
+
+void Snake::listenEvent(ECustomEvents event)
+{
+    switch(event)
+    {
+        case ECustomEvents::EAT_FEED:
+            growUp();
+            break;
+        default:
+            break;
+    }
 }
 
 void Snake::moveSnake()

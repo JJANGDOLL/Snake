@@ -4,9 +4,10 @@
 #include "Screen.h"
 
 #include <sstream>
+#include "Events.h"
 
 Feed::Feed()
-    : _shape('X')
+    : _shape('X'), _numObservers(0)
 {
     
 }
@@ -20,15 +21,6 @@ void Feed::init()
     sPos.Y += (_mapSize >> 1);
 
     _feedCoord = sPos;
-}
-
-void Feed::newFeed(World& world)
-{
-    randomInRange(world.MapSize());
-}
-
-void Feed::checkHit()
-{
 }
 
 void Feed::update()
@@ -45,7 +37,59 @@ void Feed::setWorld(World* world)
     _world = world;
 }
 
-void Feed::SetScreen(Screen& pscreen)
+void Feed::setScreen(Screen& pscreen)
 {
     _screen = &pscreen;
 }
+
+
+void Feed::setNewCoord()
+{
+    COORD sPos = _world->startMapCoord();
+
+    sPos.X += randomInRange(_mapSize * 2);
+    sPos.Y += randomInRange(_mapSize);
+
+    _feedCoord = sPos;
+}
+
+// void Feed::addObserver(IPhysicsObserver* observer)
+// {
+//     _physicsObserver[_numObservers] = observer;
+// }
+// 
+// void Feed::removeObserver(IPhysicsObserver* observer)
+// {
+//     for(int i = 0; i < 10; i++)
+//     {
+//         if(_physicsObserver[i] == observer)
+//         {
+//             for(int j = i; j < _numObservers; j++)
+//             {
+//                 _physicsObserver[j] = _physicsObserver[j + 1];
+//             }
+//             _numObservers--;
+//         }
+//     }
+// }
+
+// void Feed::physicsSubjectNotify(const IPhysicsSubject& entity, const ECustomEvents& event)
+// {
+//     for(int i = 0; i < _numObservers; i++)
+//     {
+//         _physicsObserver[i]->physicsOnNotify(*this, ECustomEvents::EAT_FEED);
+//     }
+// }
+
+void Feed::listenEvent(ECustomEvents event)
+{
+    switch(event)
+    {
+        case ECustomEvents::EAT_FEED:
+            setNewCoord();
+            break;
+        default:
+            break;
+    }
+}
+

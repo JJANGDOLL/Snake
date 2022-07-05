@@ -17,11 +17,14 @@
 
 #include "Macros.h"
 #include "Interfaces.h"
+#include "Utilities.h"
 
 #pragma comment(lib, "kernel32.lib")
 
 HANDLE hStdout;
 HANDLE hStdin;
+
+
 
 int main(void)
 {
@@ -68,6 +71,8 @@ int main(void)
     Snake* snake = World::getInstance().createUpdateObject<Snake>();
     Feed* feed = World::getInstance().createUpdateObject<Feed>();
 
+//     Physics::getInstance().bindPhysicsSubject(feed);
+
     screen->init(hStdout);
     controller->init(hStdin, *snake);
     snake->init();
@@ -75,7 +80,7 @@ int main(void)
 
     controller->SetScreen(*screen);
     snake->SetScreen(*screen);
-    feed->SetScreen(*screen);
+    feed->setScreen(*screen);
 
     while(!World::getInstance().isEnd())
     {
@@ -85,6 +90,12 @@ int main(void)
 
         screen->DrawCall();
 
+        if(checkSnakeIsEat(snake->getHeadCoord(), feed->getFeedCoord()))
+        {
+            World::getInstance().addEvent(ECustomEvents::EAT_FEED);
+        }
+
+        World::getInstance().eventBroadcast();
 
         std::chrono::duration<double> elapsedTime = std::chrono::steady_clock::now() - start;
         term = (World::getInstance().getPerSecond() - elapsedTime.count());

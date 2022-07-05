@@ -1,12 +1,7 @@
 #pragma once
 
-#include <cstdlib>
-#include <ctime>
+#include <Windows.h>
 
-int randomInRange(int size)
-{
-    std::srand(std::time(nullptr));
-    int randomVar = std::rand() / ((RAND_MAX + 1u) / size);
+int randomInRange(int size);
 
-    return randomVar;
-}
+bool checkSnakeIsEat(const COORD snake, const COORD feed);

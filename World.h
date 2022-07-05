@@ -8,6 +8,8 @@
 #include <iostream>
 #include <map>
 
+#include "Events.h"
+
 class Screen;
 class IUpdate;
 
@@ -20,7 +22,6 @@ public:
     ~World() {};
 
     void updateAll();
-    void physicsCheck();
 
     template<typename T>
     T* createUpdateObject()
@@ -60,6 +61,13 @@ public:
         _beginTime = std::chrono::steady_clock::now();
     }
 
+    void eventBroadcast();
+
+    inline void addEvent(const ECustomEvents& event)
+    {
+        _customEvents.push_back(event);
+    }
+
 private:
     uint8_t _mapSize;
     Screen* _screen;
@@ -69,6 +77,7 @@ private:
     std::vector<IUpdate*> _updateObjects;
     bool _isEnd = false;
     std::map<COORD, bool> _borderCoord;
+    std::vector<ECustomEvents> _customEvents;
 
     World(int InSize, Screen* InScreen)
         : _mapSize(InSize)

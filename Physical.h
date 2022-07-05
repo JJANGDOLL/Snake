@@ -2,6 +2,7 @@
 
 #include <Windows.h>
 #include <vector>
+#include "Events.h"
 
 #include "Interfaces.h"
 
@@ -11,18 +12,20 @@ class Snake;
 class Physics
 {
 public:
-    Physics& getInstance();
+    static Physics& getInstance();
 
     bool checkHitCoord(const COORD, const COORD);
 
-    template<typename T>
-    void bindPhysicsObject(T* obj)
-    {
-        _physicsObjects.emplace_back(obj);
-    }
+//     template<typename T>
+//     void bindPhysicsSubject(T* obj)
+//     {
+//         _physicsObjects.emplace_back(obj);
+//     }
+
 
 private:
-    std::vector<IPhysics*> _physicsObjects;
+//     std::vector<IPhysicsSubject*> _physicsObjects;
+    std::vector<ECustomEvents> _customEvents;
 
     Physics() {};
 

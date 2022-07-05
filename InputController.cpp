@@ -5,9 +5,8 @@
 #include "Snake.h"
 #include <sstream>
 
-void InputController::checkHit()
+void InputController::listenEvent(ECustomEvents event)
 {
-    throw std::logic_error("The method or operation is not implemented.");
 }
 
 void InputController::ProcessUserInput()
