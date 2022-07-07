@@ -4,7 +4,7 @@
 #include "Events.h"
 #include <sstream>
 
-const char Snake::Body = 'O';
+const char Snake::BodyShape = 'O';
 
 void Snake::SetScreen(Screen& pScreen)
 {
@@ -20,7 +20,7 @@ void Snake::update()
 {
     std::ostringstream stringStream;
 
-    stringStream << Snake::Body;
+    stringStream << Snake::BodyShape;
 
     if(_tickCount >= 3)
     {

@@ -17,7 +17,7 @@ private:
         Right
     };
 
-    const static char Body;
+    const static char BodyShape;
 
 public:
     Snake()
@@ -44,6 +44,11 @@ public:
         return _bodies[0];
     }
 
+    inline auto getBodies()
+    {
+        std::deque<COORD> slice(_bodies.begin() + 1, _bodies.end());
+        return slice;
+    }
 
     virtual void listenEvent(ECustomEvents event) override;
 

@@ -95,6 +95,25 @@ int main(void)
             World::getInstance().addEvent(ECustomEvents::EAT_FEED);
         }
 
+        for(const auto& border : World::getInstance().getBorderCoord())
+        {
+            if(border.second == true)
+            {
+                if(checkSnakeHitBorder(snake->getHeadCoord(), border.first))
+                {
+                    World::getInstance().gameEnd();
+                }
+            }
+        }
+
+        for(const auto& body : snake->getBodies())
+        {
+            if(checkSnakeHitBody(snake->getHeadCoord(), body))
+            {
+                World::getInstance().gameEnd();
+            }
+        }
+
         World::getInstance().eventBroadcast();
 
         std::chrono::duration<double> elapsedTime = std::chrono::steady_clock::now() - start;

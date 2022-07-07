@@ -68,6 +68,11 @@ public:
         _customEvents.push_back(event);
     }
 
+    inline auto getBorderCoord()
+    {
+        return _borderCoord;
+    }
+
 private:
     uint8_t _mapSize;
     Screen* _screen;
