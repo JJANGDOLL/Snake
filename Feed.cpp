@@ -47,8 +47,8 @@ void Feed::setNewCoord()
 {
     COORD sPos = _world->startMapCoord();
 
-    sPos.X += randomInRange(_mapSize * 2 - 2) + 1;
-    sPos.Y += randomInRange(_mapSize - 2) + 1;
+    sPos.X += randomInRange(_mapSize * 2 - 3) + 1;
+    sPos.Y += randomInRange(_mapSize - 3) + 1;
 
     _feedCoord = sPos;
 }

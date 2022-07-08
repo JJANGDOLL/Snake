@@ -22,7 +22,7 @@ void Snake::update()
 
     stringStream << Snake::BodyShape;
 
-    if(_tickCount >= 3)
+    if(_tickCount >= _speedDelay)
     {
         moveSnake();
         _tickCount = 0;
@@ -47,6 +47,9 @@ void Snake::init()
     _bodies.push_back({sPos.X + 1, sPos.Y});
     _bodies.push_back({sPos.X, sPos.Y});
     _bodies.push_back({sPos.X - 1, sPos.Y});
+
+    _speedDelay = 4;
+    _eatFeedCount = 0;
 }
 
 void Snake::growUp()
@@ -63,6 +66,19 @@ void Snake::listenEvent(ECustomEvents event)
     {
         case ECustomEvents::EAT_FEED:
             growUp();
+            _eatFeedCount++;
+            if(_eatFeedCount == 3)
+            {
+                _speedDelay--;
+            }
+            if(_eatFeedCount == 6)
+            {
+                _speedDelay--;
+            }
+            if(_eatFeedCount == 9)
+            {
+                _speedDelay--;
+            }
             break;
         default:
             break;

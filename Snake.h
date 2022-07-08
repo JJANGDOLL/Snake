@@ -21,7 +21,7 @@ private:
 
 public:
     Snake()
-        : _len(3), _screen(nullptr), _world(nullptr), _moveDir(MoveDir::Right), _tickCount(0)
+        : _len(3), _screen(nullptr), _world(nullptr), _moveDir(MoveDir::Right), _tickCount(0), _speedDelay(4), _eatFeedCount(0)
     {};
 
     void SetScreen(Screen& pScreen);
@@ -58,7 +58,9 @@ private:
     World* _world;
     MoveDir _moveDir;
     std::deque<COORD> _bodies;
-    uint16_t _tickCount;
+    UINT8 _tickCount;
+    UINT8 _eatFeedCount;
+    UINT8 _speedDelay;
 
     void moveSnake();
 };
