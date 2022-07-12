@@ -61,6 +61,11 @@ public:
         _beginTime = std::chrono::steady_clock::now();
     }
 
+    inline void gameStart()
+    {
+        bGameStart = true;
+    }
+
     void eventBroadcast();
 
     inline void addEvent(const ECustomEvents& event)
@@ -73,6 +78,16 @@ public:
         return _borderCoord;
     }
 
+    inline bool isGameStart()
+    {
+        return bGameStart;
+    }
+
+    inline void gameOver()
+    {
+        bGameStart = false;
+    }
+
 private:
     uint8_t _mapSize;
     Screen* _screen;
@@ -83,6 +98,7 @@ private:
     bool _isEnd = false;
     std::map<COORD, bool> _borderCoord;
     std::vector<ECustomEvents> _customEvents;
+    bool bGameStart = false;
 
     World(int InSize, Screen* InScreen)
         : _mapSize(InSize)

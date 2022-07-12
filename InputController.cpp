@@ -83,6 +83,7 @@ bool InputController::KeyEventProc(KEY_EVENT_RECORD ker)
                 break;
             case VK_SPACE:
                 _world->resetBeginTime();
+                _world->gameStart();
                 break;
             default:
                 break;

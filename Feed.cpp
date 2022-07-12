@@ -25,11 +25,14 @@ void Feed::init()
 
 void Feed::update()
 {
-    std::ostringstream stringStream;
+    if(_world->isGameStart())
+    {
+        std::ostringstream stringStream;
 
-    stringStream << _shape;
+        stringStream << _shape;
 
-    _screen->GetCurrentBuffer().AddData(_feedCoord, stringStream.str());
+        _screen->GetCurrentBuffer().AddData(_feedCoord, stringStream.str());
+    }
 }
 
 void Feed::setWorld(World* world)

@@ -18,22 +18,25 @@ void Snake::setWorld(World* world)
 
 void Snake::update()
 {
-    std::ostringstream stringStream;
-
-    stringStream << Snake::BodyShape;
-
-    if(_tickCount >= _speedDelay)
+    if(_world->isGameStart())
     {
-        moveSnake();
-        _tickCount = 0;
-    }
+        std::ostringstream stringStream;
 
-    for(COORD body : _bodies)
-    {
-        _screen->GetCurrentBuffer().AddData(body, stringStream.str());
-    }
+        stringStream << Snake::BodyShape;
 
-    _tickCount++;
+        if(_tickCount >= _speedDelay)
+        {
+            moveSnake();
+            _tickCount = 0;
+        }
+
+        for(COORD body : _bodies)
+        {
+            _screen->GetCurrentBuffer().AddData(body, stringStream.str());
+        }
+
+        _tickCount++;
+    }
 }
 
 void Snake::init()

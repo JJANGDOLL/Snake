@@ -101,7 +101,7 @@ int main(void)
             {
                 if(checkSnakeHitBorder(snake->getHeadCoord(), border.first))
                 {
-                    World::getInstance().gameEnd();
+                    World::getInstance().gameOver();
                 }
             }
         }
@@ -110,8 +110,8 @@ int main(void)
         {
             if(checkSnakeHitBody(snake->getHeadCoord(), body))
             {
-                World::getInstance().gameEnd();
-            }
+                World::getInstance().gameOver();
+            } 
         }
 
         World::getInstance().eventBroadcast();
