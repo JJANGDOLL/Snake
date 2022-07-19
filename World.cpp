@@ -25,6 +25,7 @@ const COORD World::StartCoord = {0, 2};
 void World::updateAll() 
 {
     ElapsedTimer();
+    printScore();
     renderMap();
     if(!_bGameStart)
     {
@@ -67,6 +68,19 @@ void World::gameOver()
     _bGameStart = false;
 }
 
+void World::printScore()
+{
+    if(isGameStart())
+    {
+        COORD tCoord = {0, 1};
+        std::ostringstream stringStream;
+
+        stringStream << "Score : " << _score << "     ";
+
+        _screen->GetCurrentBuffer().AddData(tCoord, stringStream.str(), 1);
+    }
+}
+
 void World::ElapsedTimer()
 {
     if(isGameStart())
@@ -74,7 +88,7 @@ void World::ElapsedTimer()
         COORD tCoord = {0, 0};
         std::ostringstream stringStream;
 
-        stringStream << "Elapsed Time : " << std::chrono::duration_cast<std::chrono::seconds> (std::chrono::steady_clock::now() - _beginTime).count();
+        stringStream << "Elapsed Time : " << std::chrono::duration_cast<std::chrono::seconds> (std::chrono::steady_clock::now() - _beginTime).count() << "     ";
 
         _screen->GetCurrentBuffer().AddData(tCoord, stringStream.str(), 1);
     }
@@ -140,6 +154,11 @@ void World::readyToStart()
     std::ostringstream readyNotice;
     readyNotice << notice;
     _screen->GetCurrentBuffer().AddData(sPos, readyNotice.str(), 2);
+}
+
+void World::scoreUp()
+{
+    _score++;
 }
 
 World& World::getInstance(int InSize /*= 0*/, Screen* InScreen /*= nullptr*/)

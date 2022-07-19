@@ -59,6 +59,7 @@ public:
     inline void resetBeginTime()
     {
         _beginTime = std::chrono::steady_clock::now();
+
     }
 
     inline void gameStart()
@@ -84,6 +85,8 @@ public:
     }
 
     void gameOver();
+    void printScore();
+    void scoreUp();
 
 private:
     uint8_t _mapSize;
@@ -96,6 +99,7 @@ private:
     std::map<COORD, bool> _borderCoord;
     std::vector<ECustomEvents> _customEvents;
     bool _bGameStart = false;
+    int _score;
 
     World(int InSize, Screen* InScreen)
         : _mapSize(InSize)
@@ -103,6 +107,7 @@ private:
         , _guide('#')
         , _perSecond((double)1.0 / 8.0)
         , _beginTime(std::chrono::steady_clock::now())
+        , _score(0)
     {};
 
     World(const World&);

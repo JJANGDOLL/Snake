@@ -56,6 +56,8 @@ void Snake::init()
 
     _speedDelay = 4;
     _eatFeedCount = 0;
+
+    _len = 3;
 }
 
 void Snake::growUp()
@@ -72,6 +74,7 @@ void Snake::listenEvent(ECustomEvents event)
     {
         case ECustomEvents::EAT_FEED:
             growUp();
+            _world->scoreUp();
             _eatFeedCount++;
             if(_eatFeedCount == 3)
             {
