@@ -15,6 +15,7 @@ class IUpdate
 public:
     virtual void update() = 0;
     virtual void listenEvent(ECustomEvents event) = 0;
+    virtual void reset() = 0;
 };
 
 // class IPhysicsSubject

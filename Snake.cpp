@@ -32,7 +32,7 @@ void Snake::update()
 
         for(COORD body : _bodies)
         {
-            _screen->GetCurrentBuffer().AddData(body, stringStream.str());
+            _screen->GetCurrentBuffer().AddData(body, stringStream.str(), 1);
         }
 
         _tickCount++;
@@ -47,6 +47,9 @@ void Snake::init()
     sPos.X += (mapSize >> 1);
     sPos.Y += (mapSize >> 1);
 
+    _moveDir = MoveDir::Right;
+
+    _bodies.clear();
     _bodies.push_back({sPos.X + 1, sPos.Y});
     _bodies.push_back({sPos.X, sPos.Y});
     _bodies.push_back({sPos.X - 1, sPos.Y});
@@ -86,6 +89,11 @@ void Snake::listenEvent(ECustomEvents event)
         default:
             break;
     }
+}
+
+void Snake::reset()
+{
+    init();
 }
 
 void Snake::moveSnake()

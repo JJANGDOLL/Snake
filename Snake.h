@@ -52,6 +52,9 @@ public:
 
     virtual void listenEvent(ECustomEvents event) override;
 
+
+    virtual void reset() override;
+
 private:
     uint8_t _len = 3;
     Screen* _screen;

@@ -42,6 +42,9 @@ public:
 
     virtual void listenEvent(ECustomEvents event) override;
 
+
+    virtual void reset() override;
+
 private:
     COORD _feedCoord;
     int _mapSize;

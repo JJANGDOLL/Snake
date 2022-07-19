@@ -63,7 +63,7 @@ public:
 
     inline void gameStart()
     {
-        bGameStart = true;
+        _bGameStart = true;
     }
 
     void eventBroadcast();
@@ -80,13 +80,10 @@ public:
 
     inline bool isGameStart()
     {
-        return bGameStart;
+        return _bGameStart;
     }
 
-    inline void gameOver()
-    {
-        bGameStart = false;
-    }
+    void gameOver();
 
 private:
     uint8_t _mapSize;
@@ -98,7 +95,7 @@ private:
     bool _isEnd = false;
     std::map<COORD, bool> _borderCoord;
     std::vector<ECustomEvents> _customEvents;
-    bool bGameStart = false;
+    bool _bGameStart = false;
 
     World(int InSize, Screen* InScreen)
         : _mapSize(InSize)
@@ -113,8 +110,9 @@ private:
 
     void ElapsedTimer();
 
-    void CreateMap();
+    void createMap();
     void renderMap();
+    void readyToStart();
 };
 
 

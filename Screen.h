@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Vector>
+#include <Map>
 #include <iostream>
 #include <Windows.h>
 
@@ -9,45 +10,57 @@
 struct ScreenData
 {
     COORD pos;
+    bool isWritted;
     std::string data;
+    UINT8 priority;
 };
 
 class ScreenBuffer
 {
 private:
-    std::vector<ScreenData> data;
+    std::vector<std::vector<ScreenData>> _data;
+    uint8_t _nRow = 50;
+    uint8_t _nCol = 25;
 
-public:
-    ScreenBuffer() {};
+public: 
+    ScreenBuffer();
 
-    void AddData(const COORD& InPos, const std::string InData)
+    void AddData(const COORD& InPos, const std::string InData, const UINT8 InPriority);
+
+    std::vector<std::vector<ScreenData>> GetData()
     {
-        ScreenData t;
-        t.pos = InPos;
-        t.data = InData;
-        data.push_back(t);
-    }
-
-    std::vector<ScreenData> GetData()
-    {
-        return data;
+        return _data;
     }
 
     void Clear()
     {
-        data.clear();
+        _data.clear();
     }
+
+    void resetData()
+    {
+        for(int i = 0; i < _nRow; i++)
+        {
+            for(int j = 0; j < _nCol; j++)
+            {
+                _data[i][j].data = "";
+                _data[i][j].isWritted = false;
+            }
+        }
+    }
+
+    bool operator<(const COORD& rhs) const;
 };
 
 class Screen
 {
 private:
-    ScreenBuffer screenBuffer[2];
     int currentIdx = 0;
     HANDLE hStdout;
 
+    ScreenBuffer screenBuffer[2];
 public:
-    Screen() {};
+    Screen();
 
     void init(const HANDLE InHandle);
 

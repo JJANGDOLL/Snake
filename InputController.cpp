@@ -9,6 +9,10 @@ void InputController::listenEvent(ECustomEvents event)
 {
 }
 
+void InputController::reset()
+{
+}
+
 void InputController::ProcessUserInput()
 {
     INPUT_RECORD inRecordBuffer[128];
@@ -70,17 +74,29 @@ bool InputController::KeyEventProc(KEY_EVENT_RECORD ker)
         switch(ker.wVirtualKeyCode)
         {
             case VK_UP:
-                _snake->setMoveUp();
-                break;
+                if(_world->isGameStart())
+                {
+                    _snake->setMoveUp();
+                    break;
+                }
             case VK_DOWN:
-                _snake->setMoveDown();
-                break;
+                if(_world->isGameStart())
+                {
+                    _snake->setMoveDown();
+                    break;
+                }
             case VK_LEFT:
-                _snake->setMoveLeft();
-                break;
+                if(_world->isGameStart())
+                {
+                    _snake->setMoveLeft();
+                    break;
+                }
             case VK_RIGHT:
-                _snake->setMoveRight();
-                break;
+                if(_world->isGameStart())
+                {
+                    _snake->setMoveRight();
+                    break;
+                }
             case VK_SPACE:
                 _world->resetBeginTime();
                 _world->gameStart();

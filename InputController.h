@@ -40,6 +40,9 @@ public:
 
     virtual void listenEvent(ECustomEvents event) override;
 
+
+    virtual void reset() override;
+
 private:
     Screen* _screen;
     World* _world;

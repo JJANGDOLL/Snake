@@ -31,7 +31,7 @@ void Feed::update()
 
         stringStream << _shape;
 
-        _screen->GetCurrentBuffer().AddData(_feedCoord, stringStream.str());
+        _screen->GetCurrentBuffer().AddData(_feedCoord, stringStream.str(), 1);
     }
 }
 
@@ -94,5 +94,10 @@ void Feed::listenEvent(ECustomEvents event)
         default:
             break;
     }
+}
+
+void Feed::reset()
+{
+    init();
 }
 

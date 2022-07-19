@@ -26,6 +26,10 @@ void World::updateAll()
 {
     ElapsedTimer();
     renderMap();
+    if(!_bGameStart)
+    {
+        readyToStart();
+    }
 
     for(IUpdate* u : _updateObjects)
     {
@@ -53,17 +57,30 @@ void World::eventBroadcast()
     _customEvents.clear();
 }
 
-void World::ElapsedTimer()
+void World::gameOver()
 {
-    COORD tCoord = {0, 0};
-    std::ostringstream stringStream;
+    for(IUpdate* u : _updateObjects)
+    {
+        u->reset();
+    }
 
-    stringStream << "Elapsed Time : " << std::chrono::duration_cast<std::chrono::seconds> (std::chrono::steady_clock::now() - _beginTime).count();
-
-    _screen->GetCurrentBuffer().AddData(tCoord, stringStream.str());
+    _bGameStart = false;
 }
 
-void World::CreateMap()
+void World::ElapsedTimer()
+{
+    if(isGameStart())
+    {
+        COORD tCoord = {0, 0};
+        std::ostringstream stringStream;
+
+        stringStream << "Elapsed Time : " << std::chrono::duration_cast<std::chrono::seconds> (std::chrono::steady_clock::now() - _beginTime).count();
+
+        _screen->GetCurrentBuffer().AddData(tCoord, stringStream.str(), 1);
+    }
+}
+
+void World::createMap()
 {
     COORD sPos = startMapCoord();
 
@@ -105,8 +122,24 @@ void World::renderMap()
     {
         std::ostringstream mapGuideStream;
         mapGuideStream << (cell.second ? _guide : ' ');
-        _screen->GetCurrentBuffer().AddData(cell.first, mapGuideStream.str());
+        _screen->GetCurrentBuffer().AddData(cell.first, mapGuideStream.str(), 1);
     }
+}
+
+void World::readyToStart()
+{
+    COORD sPos = startMapCoord();
+    int _mapSize = MapSize();
+
+    std::string notice = "Press Space bar to Start Game";
+
+
+    sPos.X += (_mapSize) - (notice.length() / 2);
+    sPos.Y += (_mapSize >> 1);
+
+    std::ostringstream readyNotice;
+    readyNotice << notice;
+    _screen->GetCurrentBuffer().AddData(sPos, readyNotice.str(), 2);
 }
 
 World& World::getInstance(int InSize /*= 0*/, Screen* InScreen /*= nullptr*/)
@@ -117,7 +150,7 @@ World& World::getInstance(int InSize /*= 0*/, Screen* InScreen /*= nullptr*/)
         assert((InSize > 0) && (InScreen != nullptr));
 
         _instance = new World(InSize, InScreen);
-        _instance->CreateMap();
+        _instance->createMap();
     }
     return *_instance;
 }
