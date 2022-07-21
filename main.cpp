@@ -114,6 +114,14 @@ int main(void)
             } 
         }
 
+        for(const auto& body : snake->getBodies())
+        {
+            if(checkSnakeHitBody(feed->getFeedCoord(), body))
+            {
+                feed->setNewCoord();
+            }
+        }
+
         World::getInstance().eventBroadcast();
 
         std::chrono::duration<double> elapsedTime = std::chrono::steady_clock::now() - start;
