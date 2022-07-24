@@ -48,6 +48,8 @@ void Screen::DrawCall()
         }
     }
     screenBuffer[currentIdx].resetData();
+    currentIdx++;
+    currentIdx %= 2;
 }
 
 void ScreenBuffer::AddData(const COORD& InPos, const std::string InData, const UINT8 InPriority)
